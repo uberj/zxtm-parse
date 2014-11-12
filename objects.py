@@ -58,6 +58,8 @@ class Pool(object):
 
     @property
     def nodes_table(self):
+        if not self.blob:
+            return []
         return self.blob.get_path('/info/properties/basic').json['nodes_table']
 
 
@@ -176,7 +178,11 @@ class ZXTM(object):
     @property
     def pools(self):
         if not self._pools:
-            self._pools = {}
+            self._pools = {
+                'discard': Pool(
+                    'discard', None
+                )
+            }
             for pool_name in self.blob.get_path('/pools').json:
                 if pool_name in self._pools:
                     print (
@@ -205,12 +211,12 @@ class ZXTM(object):
         return self._vservers
 
     def zip_tigs_and_pools(self):
-        log("Parsing zxtm {0}".format(self.url))
         for vserver_name, vserver in self.vservers.iteritems():
             #print 'Name: ' + vserver.name
             #print 'Pool: ' + vserver.pool
             #print 'TIG: ' + str(vserver.listening_tigs)
-            if not vserver.pool_name in self.pools:
+            if vserver.pool_name not in self.pools:
+                log("Parsing zxtm {0}".format(self.url))
                 log("Couldn't find a pool for {0}".format(repr(vserver)))
             else:
                 vserver.pool = self.pools[vserver.pool_name]
@@ -218,6 +224,7 @@ class ZXTM(object):
 
             for vserver.tig_name in vserver.listening_tigs:
                 if not vserver.tig_name in self.tigs:
+                    log("Parsing zxtm {0}".format(self.url))
                     log("Couldn't find a tig for {0}".format(repr(vserver)))
                 else:
                     vserver.tigs.append(self.tigs[vserver.tig_name])
@@ -299,9 +306,16 @@ class Blob(object):
 
 
 class ZXTMState(object):
-    def __init__(self, ulr=None, filename=None):
+    def __init__(self, ulr=None, filename=None, version='0.005'):
         with open(filename, 'r') as fd:
             self.blob = Blob(json.load(fd))
+
+        if self.version != version:
+            log("Version mismatch!")
+
+    @property
+    def version(self):
+        return self.blob.json['version']
 
     @property
     def zxtms(self):
@@ -343,7 +357,6 @@ if __name__ == '__main__':
                 print '-' * 50
                 print node
     allnodes = AllNodes(zs)
-    # 10.8.70.94
     host_id = '10.20.77.22'
     node = allnodes.find(host_id)
     print "Looking up info for {0}".format(host_id)
