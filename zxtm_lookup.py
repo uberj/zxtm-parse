@@ -1,7 +1,6 @@
 import simplejson as json
 import sys
 from jsonpointer import resolve_pointer
-#import pprint as pp
 
 
 def log(msg, level='error'):
@@ -212,9 +211,6 @@ class ZXTM(object):
 
     def zip_tigs_and_pools(self):
         for vserver_name, vserver in self.vservers.iteritems():
-            #print 'Name: ' + vserver.name
-            #print 'Pool: ' + vserver.pool
-            #print 'TIG: ' + str(vserver.listening_tigs)
             if vserver.pool_name not in self.pools:
                 log("Parsing zxtm {0}".format(self.url))
                 log("Couldn't find a pool for {0}".format(repr(vserver)))
@@ -339,32 +335,17 @@ class AllNodes(ZXTMState):
 
 if __name__ == '__main__':
     zs = ZXTMState(filename='zxtm.json')
-    if False:
-        for zxtm in zs.zxtms:
-            for pool_name, pool in zxtm.pools.iteritems():
-                print '-' * 50
-                print 'Name: ' + pool_name
-                print pool
-            for vserver_name, vserver in zxtm.vservers.iteritems():
-                print '-' * 50
-                print 'Name: ' + vserver.name
-                print vserver
-            for tig_name, tig in zxtm.tigs.iteritems():
-                print '-' * 50
-                print 'Name: ' + tig_name
-                print tig.ipaddresses
-            for node in zxtm.nodes:
-                print '-' * 50
-                print node
     allnodes = AllNodes(zs)
-    host_id = '10.20.77.22'
+    if len(sys.argv) != 2:
+        print "usage: zxtm_lookup <host_id>"
+        sys.exit(1)
+    host_id = sys.argv[1]
     node = allnodes.find(host_id)
-    print "Looking up info for {0}".format(host_id)
-    print ""
+    log("Looking up info for {0}\n".format(host_id))
     for node, pool in node.instances:
         for vserver in pool.vservers:
             for tig in vserver.tigs:
-                print (
+                log(
                     "Node {node} is backing TIG {tig} in the pool {pool}. "
                     "Configuration is on the {vserver} vserver".format(
                         node=node['node'], tig=tig.name, pool=pool.name,
