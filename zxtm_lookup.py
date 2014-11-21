@@ -104,10 +104,8 @@ class Nodes(object):
         node.instances.append((node_instance, pool))
 
     def __iter__(self):
-        def nodes():
-            for node_name, node in self._nodes.iteritems():
-                yield (node_name, node)
-        return nodes()
+        for node_name, node in self._nodes.iteritems():
+            yield (node_name, node)
 
     def __getitem__(self, node_id):
         return self._nodes[node_id]
