@@ -1,1 +1,5 @@
-JSONPointer RFC http://tools.ietf.org/html/rfc6901
+This is my sketch of how to implement zxtm parsing functionality for Inventory.
+
+Final implementation will be found at `https://github.com/uberj/inventory/blob/zxtm_slurp/slurpee/zxtm/objects.py`
+
+For reference the JSONPointer RFC can be found at `http://tools.ietf.org/html/rfc6901`
