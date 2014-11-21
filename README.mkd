@@ -3,3 +3,15 @@ This is my sketch of how to implement zxtm parsing functionality for Inventory.
 Final implementation will be found at `https://github.com/uberj/inventory/blob/zxtm_slurp/slurpee/zxtm/objects.py`
 
 For reference the JSONPointer RFC can be found at `http://tools.ietf.org/html/rfc6901`
+
+Example usage:
+```
+$ python zxtm_lookup.py 10.1.2.3
+Looking up info for 10.1.2.3
+
+Node 10.1.2.3:993 is backing TIG mail.example.com in the pool exampleproxy:993. Configuration is on the app-imap vserver
+Node 10.1.2.3:995 is backing TIG mail.example.com in the pool exampleproxy:995. Configuration is on the app-pop3 vserver
+Node 10.1.2.3:443 is backing TIG mail.example.com in the pool exampleproxy:443. Configuration is on the app-web vserver
+Node 10.1.2.3:443 is backing TIG mail.example.com in the pool exampleproxy:443. Configuration is on the app-admin vserver
+Node 10.1.2.3:7071 is backing TIG appadmin.mail.example.com in the pool exampleproxy-private:7071. Configuration is on the appadmin-private vserver
+```
